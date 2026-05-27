@@ -3,207 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سينما الأصدقاء - الفخامة المغربية 🍿🇲🇦</title>
+    <title>سينما الأصدقاء - النسخة الذكية 🍿💬</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <style>
-        /* الستايل العام والتصميم الغامق الفخم */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #0b0b0f; 
-            color: #e2e8f0; 
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh;
-        }
-
-        /* الزخرفة المغربية المهيبة في الخلفية للشاشة الرئيسية */
-        .moroccan-bg {
-            background-color: #0d0d14;
-            /* نمط هندسي إسلامي/مغربي متكرر ومعتم ليعطي فخامة بدون إزعاج العين */
-            background-image: 
-                radial-gradient(circle at 50% 50%, transparent 20%, #0b0b0f 20%, #0b0b0f 40%, transparent 40%, transparent 60%, #0b0b0f 60%, #0b0b0f 80%, transparent 80%),
-                linear-gradient(45deg, #161622 25%, transparent 25%, transparent 75%, #161622 75%, #161622),
-                linear-gradient(45deg, #161622 25%, transparent 25%, transparent 75%, #161622 75%, #161622);
-            background-size: 60px 60px;
-            background-position: 0 0, 0 0, 30px 30px;
-        }
-
-        .container { width: 100%; max-width: 550px; padding: 20px; box-sizing: border-box; }
-        .panel { background: #1f1f2e; padding: 15px; border-radius: 14px; border: 1px solid #2d2d44; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        
-        h1 { color: #e50914; font-size: 26px; text-align: center; margin-bottom: 20px; text-shadow: 0 0 15px rgba(229,9,20,0.4); }
-        input, button { padding: 12px; border-radius: 8px; border: none; font-size: 14px; margin: 6px 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0b0b0f; color: #e2e8f0; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 550px; background: #15151e; padding: 15px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); box-sizing: border-box; }
+        .panel { background: #1f1f2e; padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #2d2d44; }
+        input, button { padding: 10px; border-radius: 8px; border: none; font-size: 14px; margin: 4px 0; box-sizing: border-box; }
         input { background: #2a2a3d; color: white; width: 100%; border: 1px solid #3f3f5c; }
-        input:focus { outline: 1px solid #e50914; }
+        .btn-main { background-color: #e50914; color: white; cursor: pointer; font-weight: bold; width: 100%; }
         
-        .btn-main { background-color: #e50914; color: white; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
-        .btn-main:hover { background-color: #b80710; }
-        
-        /* قائمة الغرف المحفوظة */
-        .room-list { margin-top: 15px; background: #111116; padding: 10px; border-radius: 10px; max-height: 150px; overflow-y: auto; border: 1px solid #2d2d44; }
-        .room-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #2d2d44; font-size: 13px; }
-        .room-item:last-child { border: none; }
-        .btn-go { background: #10b981; color: white; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-
-        /* أسماء المطورين في الأسفل */
-        .users-footer { margin-top: 30px; text-align: center; font-size: 14px; color: #f59e0b; font-family: monospace; background: rgba(31, 31, 46, 0.8); padding: 8px 20px; border-radius: 20px; border: 1px solid #2d2d44; }
-
-        /* شاشة السينما وحاوية الفيديو */
-        #cinema-screen { display: none; width: 100%; max-width: 1100px; transition: all 0.5s ease; }
-        .cinema-layout { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-        
-        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        /* حاوية الفيديو والقفل */
+        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 12px; overflow: hidden; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         .video-overlay.locked { pointer-events: auto; }
 
-        /* أزرار التحكم المصغرة والذكية */
-        .controls-box { background: #1f1f2e; padding: 12px; border-radius: 12px; border: 1px solid #2d2d44; display: flex; flex-direction: column; gap: 8px; }
-        .controls-row { display: flex; align-items: center; gap: 15px; justify-content: center; }
-        
-        /* الزر المصغر الدائري للتشغيل */
-        .btn-toggle { background: #e50914; color: white; border: none; border-radius: 50%; font-size: 18px; cursor: pointer; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; transition: 0.3s; box-shadow: 0 0 10px rgba(229,9,20,0.4); }
+        /* الزر الذكي الموحد */
+        .controls-box { background: #1f1f2e; padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid #2d2d44; text-align: center; }
+        .btn-toggle { background: #e50914; color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 28px; cursor: pointer; transition: 0.3s; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 10px auto; }
         .btn-toggle:active { transform: scale(0.9); }
         
-        /* زر تقريب الشاشة (المسرح) */
-        .btn-theater { background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 10px 15px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-theater:hover { background: #2563eb; }
-
         /* شريط المشاهدة */
-        .timeline-container { display: flex; align-items: center; gap: 8px; width: 100%; }
+        .timeline-container { display: flex; align-items: center; gap: 8px; width: 100%; margin-bottom: 10px; }
         .time-label { font-size: 12px; font-family: monospace; color: #94a3b8; }
-        .custom-timeline { -webkit-appearance: none; width: 100%; height: 5px; border-radius: 3px; background: #475569; outline: none; }
-        .custom-timeline::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #e50914; cursor: pointer; }
+        .custom-timeline { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #475569; outline: none; }
+        .custom-timeline::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%; background: #e50914; cursor: pointer; }
 
         /* الشات */
-        .chat-box { background: #1f1f2e; border-radius: 12px; border: 1px solid #2d2d44; overflow: hidden; display: flex; flex-direction: column; min-height: 200px; }
-        .chat-messages { flex-grow: 1; height: 150px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #111116; }
-        .msg { padding: 6px 12px; border-radius: 8px; max-width: 80%; font-size: 13px; word-break: break-all; }
+        .chat-box { background: #1f1f2e; border-radius: 12px; margin-top: 15px; border: 1px solid #2d2d44; overflow: hidden; display: flex; flex-direction: column; }
+        .chat-messages { height: 120px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #111116; }
+        .msg { padding: 6px 10px; border-radius: 8px; max-width: 80%; font-size: 13px; }
         .msg.me { background: #3b82f6; align-self: flex-start; }
         .msg.friend { background: #2a2a3d; align-self: flex-end; }
-        .chat-input-row { display: flex; padding: 5px; gap: 5px; background: #1f1f2e; }
-        .chat-input-row input { margin: 0; padding: 8px; }
-        .chat-input-row button { background: #10b981; color: white; cursor: pointer; border: none; border-radius: 6px; padding: 0 15px; font-weight: bold; }
+        .chat-input-row { display: flex; padding: 5px; gap: 5px; }
 
-        /* 🎬 وضع تقريب الشاشة (المسرح الاحترافي) 🎬 */
-        /* يجعل الفيديو ضخم والشات ينتقل بثبات إلى اليسار */
-        @media (min-width: 768px) {
-            .theater-active .cinema-layout {
-                flex-direction: row-reverse; /* تدوير الاتجاه ليكون الشات يسار والمقطع يمين */
-            }
-            .theater-active .main-cinema-part {
-                flex: 3; /* الفيديو يأخذ مساحة ضخمة */
-            }
-            .theater-active .chat-box {
-                flex: 1; /* الشات على اليسار بحجم متناسق */
-                height: auto;
-            }
-        }
-        
-        .main-cinema-part { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .room-url-box { background: #0b0b0f; padding: 8px; border-radius: 6px; color: #10b981; font-size: 12px; font-family: monospace; text-align: center; margin-bottom: 10px; cursor: pointer; border: 1px dashed #10b981; }
+        .peer-id-text { background: #0b0b0f; padding: 8px; border-radius: 6px; color: #f59e0b; font-family: monospace; text-align: center; font-size: 12px; cursor: pointer; border: 1px dashed #f59e0b; }
     </style>
 </head>
-<body id="mainBody" class="moroccan-bg">
+<body>
 
-    <div id="main-screen" class="container">
-        <h1>🍿 سينما الأصدقاء الاحترافية</h1>
-        
+    <h1>🍿 سينما الأصدقاء</h1>
+    
+    <div class="container">
         <div class="panel">
-            <input type="text" id="newRoomName" placeholder="اكتب اسم الغرفة الجديدة (مثال: سهرة الخميس)...">
-            <button class="btn-main" onclick="createNewRoom()">إنشاء غرفة جديدة وربطها 🏛️</button>
-            
-            <h3 style="font-size: 14px; margin-top: 20px; color: #94a3b8;">📁 غرفك المحفوظة (دخول سريع):</h3>
-            <div id="savedRoomsContainer" class="room-list">
-                </div>
-        </div>
-
-        <div class="users-footer">
-            <span>👤 المطورين: </span>
-            <span style="color: #fff; font-weight: bold;">@sifali</span> 
-            <span style="color: #64748b;"> & </span> 
-            <span style="color: #fff; font-weight: bold;">@modi_</span>
-        </div>
-    </div>
-
-    <div id="cinema-screen" class="container">
-        <div class="room-url-box" onclick="copyRoomLink()">🔗 اضغط هنا لنسخ رابط الغرفة المباشر وإرساله لصديقك!</div>
-        
-        <div class="cinema-layout">
-            <div class="main-cinema-part">
-                <div class="video-wrapper">
-                    <div id="overlay" class="video-overlay"></div>
-                    <div id="player"></div>
-                </div>
-
-                <div class="controls-box">
-                    <div class="timeline-container">
-                        <span id="currentTime" class="time-label">00:00</span>
-                        <input type="range" id="timeline" class="custom-timeline" min="0" max="100" value="0" oninput="timelineDragged(this.value)">
-                        <span id="duration" class="time-label">00:00</span>
-                    </div>
-                    <div class="controls-row">
-                        <button id="toggleBtn" class="btn-toggle" onclick="togglePlay()">▶</button>
-                        <button class="btn-theater" onclick="toggleTheaterMode()">تقريب الشاشة 📺</button>
-                    </div>
-                </div>
-                
-                <div class="panel" style="margin-top:5px; padding: 8px;">
-                    <input type="text" id="ytUrl" placeholder="تغيير المقطع؟ ضع رابط يوتيوب جديد هنا..." style="margin:0;">
-                    <button class="btn-main" onclick="changeVideo()" style="margin-top:5px; padding:6px;">تحديث الرابط عند الطرفين 🔄</button>
-                </div>
+            <input type="text" id="ytUrl" placeholder="رابط يوتيوب هنا...">
+            <button class="btn-main" onclick="changeVideo()">تحديث الفيديو 🔄</button>
+            <div id="my-id" class="peer-id-text" onclick="navigator.clipboard.writeText(this.innerText); alert('تم نسخ الكود!');">جاري التجهيز...</div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="friend-id" placeholder="كود الصديق...">
+                <button onclick="connectToFriend()" style="background:#3b82f6; color:white;">اتصال</button>
             </div>
+        </div>
 
-            <div class="chat-box">
-                <div id="chatMessages" class="chat-messages"></div>
-                <div class="chat-input-row">
-                    <input type="text" id="chatInput" placeholder="اكتب لرفيقك..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
-                    <button onclick="sendChatMessage()">إرسال</button>
-                </div>
+        <div class="video-wrapper">
+            <div id="overlay" class="video-overlay"></div>
+            <div id="player"></div>
+        </div>
+
+        <div class="controls-box">
+            <div class="timeline-container">
+                <span id="currentTime" class="time-label">00:00</span>
+                <input type="range" id="timeline" class="custom-timeline" min="0" max="100" value="0" oninput="timelineDragged(this.value)">
+                <span id="duration" class="time-label">00:00</span>
+            </div>
+            <button id="toggleBtn" class="btn-toggle" onclick="togglePlay()">▶</button>
+        </div>
+
+        <div class="chat-box">
+            <div id="chatMessages" class="chat-messages"></div>
+            <div class="chat-input-row">
+                <input type="text" id="chatInput" placeholder="اكتب لرفيقك..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" style="background:#10b981; color:white;">إرسال</button>
             </div>
         </div>
     </div>
 
     <script>
-        let player, peer, conn = null;
-        let isPlaying = false, isRemoteAction = false, isHost = false, currentRoomId = "";
+        let player;
+        let peer = new Peer();
+        let conn = null;
+        let isPlaying = false;
+        let isRemoteAction = false;
         const overlay = document.getElementById('overlay');
         const toggleBtn = document.getElementById('toggleBtn');
 
-        // عند تحميل الصفحة، نتحقق فوراً إذا كان الصديق يدخل عبر رابط مباشر
-        window.onload = function() {
-            loadSavedRooms();
-            const urlParams = new URLSearchParams(window.location.search);
-            const joinRoomId = urlParams.get('join');
-            
-            if (joinRoomId) {
-                // دخول مباشر عبر الرابط كـ "صديق مستمع"
-                startCinemaSession(joinRoomId, false);
-            }
-        };
-
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '100%', width: '100%', videoId: 'EdhzTQD7hnU',
+                height: '100%', width: '100%',
+                videoId: 'EdhzTQD7hnU',
                 playerVars: { 'controls': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady }
             });
         }
 
         function onPlayerReady() {
-            // المراقب الذكي (كل 100ms) لرصد يوتيوب الأصلي ومزامنة الزر الخارجي فوراً عند الطرفين
+            // المراقبة الذكية كل 100 مللي ثانية
             setInterval(() => {
                 if (!player || isRemoteAction) return;
                 const state = player.getPlayerState();
                 
+                // حالة التشغيل في يوتيوب (1)
                 if (state === 1 && !isPlaying) {
                     updateUI(true);
                     sendSignal({ type: 'play', time: player.getCurrentTime() });
-                } else if (state === 2 && isPlaying) {
+                } 
+                // حالة الإيقاف في يوتيوب (2)
+                else if (state === 2 && isPlaying) {
                     updateUI(false);
                     sendSignal({ type: 'pause', time: player.getCurrentTime() });
                 }
@@ -212,102 +119,49 @@
         }
 
         function togglePlay() {
-            if (isPlaying) player.pauseVideo();
-            else player.playVideo();
+            if (isPlaying) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+            // التحديث سيتم تلقائياً عبر "المراقب" بالأعلى
         }
 
         function updateUI(play) {
             isPlaying = play;
-            toggleBtn.textContent = play ? '⏸' : '▶'; // تحول فوري لعلامة اليساوي الواقفة
+            toggleBtn.textContent = play ? '⏸' : '▶';
             if (play) overlay.classList.add('locked');
             else overlay.classList.remove('locked');
         }
 
-        // تشغيل وإلغاء وضع تقريب الشاشة (المسرح الكبير)
-        function toggleTheaterMode() {
-            document.body.classList.toggle('theater-active');
-        }
-
-        // إدارة إنشاء الغرف والروابط المباشرة
-        function createNewRoom() {
-            const name = document.getElementById('newRoomName').value.trim();
-            if (!name) return alert("الرجاء كتابة اسم للغرفة أولاً!");
-            
-            // تنظيف الاسم ليكون صالح كمعرف اتصال
-            const roomId = "room_" + Math.random().toString(36).substring(2, 9);
-            
-            // حفظ الغرفة في القائمة المحلية
-            saveRoomToStorage(name, roomId);
-            // فتح الجلسة كـ مستضيف للروم
-            startCinemaSession(roomId, true);
-        }
-
-        function startCinemaSession(roomId, hostMode) {
-            currentRoomId = roomId;
-            isHost = hostMode;
-
-            // إخفاء الشاشة الرئيسية وإظهار السينما، وحذف الزخرفة لراحة العين في المشاهدة
-            document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('cinema-screen').style.display = 'block';
-            document.getElementById('mainBody').classList.remove('moroccan-bg');
-
-            if (isHost) {
-                peer = new Peer(roomId);
-                peer.on('connection', (c) => {
-                    conn = c;
-                    setupSync();
-                    appendMessage("متصل! دخل صديقك الآن إلى الغرفة 🎉", "friend");
-                });
-            } else {
-                // إذا دخل عن طريق الرابط، ينشئ معرف عشوائي ويتصل بالمستضيف فوراً
-                peer = new Peer();
-                peer.on('open', () => {
-                    conn = peer.connect(roomId);
-                    setupSync();
-                });
+        function updateTimeline() {
+            if (player && player.getDuration) {
+                const cur = player.getCurrentTime();
+                const dur = player.getDuration();
+                document.getElementById('timeline').value = (cur / dur) * 100 || 0;
+                document.getElementById('currentTime').textContent = formatTime(cur);
+                document.getElementById('duration').textContent = formatTime(dur);
             }
         }
 
-        function copyRoomLink() {
-            const generatedLink = window.location.origin + window.location.pathname + "?join=" + currentRoomId;
-            navigator.clipboard.writeText(generatedLink);
-            alert("تم نسخ رابط الغرفة المباشر! أرسله لصديقك وسيدخل معك فوراً.");
+        function formatTime(s) {
+            let m = Math.floor(s / 60); s = Math.floor(s % 60);
+            return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
         }
 
-        // حفظ وجلب الغرف المحفوظة من الـ LocalStorage
-        function saveRoomToStorage(name, id) {
-            let rooms = JSON.parse(localStorage.getItem('saved_cinema_rooms')) || [];
-            rooms.push({ name: name, id: id });
-            localStorage.setItem('saved_cinema_rooms', JSON.stringify(rooms));
-            loadSavedRooms();
-        }
+        peer.on('open', (id) => { document.getElementById('my-id').textContent = id; });
+        peer.on('connection', (c) => { conn = c; setupSync(); });
 
-        function loadSavedRooms() {
-            const container = document.getElementById('savedRoomsContainer');
-            let rooms = JSON.parse(localStorage.getItem('saved_cinema_rooms')) || [];
-            container.innerHTML = "";
-            
-            if (rooms.length === 0) {
-                container.innerHTML = "<p style='color:#64748b; font-size:12px; text-align:center;'>لا توجد غرف محفوظة حالياً</p>";
-                return;
-            }
-
-            rooms.forEach(room => {
-                const item = document.createElement('div');
-                item.className = "room-item";
-                item.innerHTML = `
-                    <span>🏛️ ${room.name}</span>
-                    <button class="btn-go" onclick="startCinemaSession('${room.id}', true)">دخول وبث</button>
-                `;
-                container.appendChild(item);
-            });
+        function connectToFriend() {
+            conn = peer.connect(document.getElementById('friend-id').value.trim());
+            setupSync();
         }
 
         function setupSync() {
             conn.on('data', (data) => {
                 if (data.type === 'chat') { appendMessage(data.text, 'friend'); return; }
                 
-                isRemoteAction = true;
+                isRemoteAction = true; // منع اللوب
                 if (data.type === 'play') {
                     player.seekTo(data.time, true);
                     player.playVideo();
@@ -329,21 +183,6 @@
             if (conn && conn.open) conn.send(data);
         }
 
-        function updateTimeline() {
-            if (player && player.getDuration) {
-                const cur = player.getCurrentTime();
-                const dur = player.getDuration();
-                document.getElementById('timeline').value = (cur / dur) * 100 || 0;
-                document.getElementById('currentTime').textContent = formatTime(cur);
-                document.getElementById('duration').textContent = formatTime(dur);
-            }
-        }
-
-        function formatTime(s) {
-            let m = Math.floor(s / 60); s = Math.floor(s % 60);
-            return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-        }
-
         function timelineDragged(v) {
             if (!player) return;
             const target = (v / 100) * player.getDuration();
@@ -352,7 +191,7 @@
         }
 
         function sendChatMessage() {
-            const val = document.getElementById('chatInput').value.trim();
+            const val = document.getElementById('chatInput').value;
             if (!val) return;
             appendMessage(val, 'me');
             sendSignal({ type: 'chat', text: val });
